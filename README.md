@@ -34,7 +34,8 @@ python app.py
 
 ## Author
 **Kavya Wadhwa**  
-GitHub: [kavyawadhwa134](https://github.com/kavyawadhwa134)
+GitHub: [kavyawadhwa134](https://github.com/kavyawadhwa134)  
+LinkedIn: [linkedin.com/in/kavyawadhwa134](https://www.linkedin.com/in/kavyawadhwa134)
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
