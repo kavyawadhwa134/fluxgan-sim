@@ -39,11 +39,6 @@ def predict():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-<<<<<<< HEAD
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 500))  # PORT env var is provided by Render
     app.run(host='0.0.0.0', port=port, debug=True)
-=======
-if __name__ == "__main__":
-    app.run(debug=True)
->>>>>>> 2fc6a65 (Initial commit)
