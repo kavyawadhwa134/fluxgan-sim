@@ -33,9 +33,17 @@ python app.py
 - `templates/`: Web interface templates
 
 ## Author
+
 **Kavya Wadhwa**  
-GitHub: [kavyawadhwa134](https://github.com/kavyawadhwa134)  
-LinkedIn: [linkedin.com/in/kavyawadhwa134](https://www.linkedin.com/in/kavyawadhwa134)
+[GitHub](https://github.com/kavyawadhwa134) | [LinkedIn](https://www.linkedin.com/in/kavyawadhwa134)  
+website : www.kavyawadhwa.info  
+email : kavyavadhwa@gmail.com
+
+Nuclear engineering enthusiast, passionate about AI for science and open-source collaboration.
+
+---
+
+A working demo of this tool is available at: [https://fluxgan-sim.onrender.com](https://fluxgan-sim.onrender.com)
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
