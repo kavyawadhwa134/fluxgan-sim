@@ -1,9 +1,8 @@
 import torch
 import torch.nn as nn
 import numpy as np
-import os
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class Generator(nn.Module):
     def __init__(self):
@@ -19,21 +18,38 @@ class Generator(nn.Module):
     def forward(self, x):
         return self.main(x)
 
-def load_checkpoint(checkpoint_path):
-    if not os.path.exists(checkpoint_path):
-        raise FileNotFoundError(f"Checkpoint not found: {checkpoint_path}")
-    
-    checkpoint = torch.load(checkpoint_path, map_location=device)
-    generator = Generator()
-    generator.load_state_dict(checkpoint['generator_state_dict'])
-    generator.to(device)
-    generator.eval()
-    return generator
+def sample_noise(num_samples, dim):
+    return torch.Tensor(np.random.uniform(-1., 1., size=[num_samples, dim]))
 
-def predict_flux(generator, enrichment):
-    enrichment = float(enrichment)
-    noise = torch.tensor(np.random.uniform(-1., 1., (1, 1)), dtype=torch.float32, device=device)
-    input_tensor = torch.tensor([[enrichment, noise.item()]], dtype=torch.float32, device=device)
-    output = generator(input_tensor).cpu().detach().numpy()
-    flux_value = output[0][1]  # assuming flux is 2nd output
-    return round(flux_value, 6)
+def load_model(checkpoint_path):
+    model = Generator().to(device)
+    checkpoint = torch.load(checkpoint_path, map_location=device)
+
+    if "generator_state_dict" in checkpoint:
+        state_dict = checkpoint["generator_state_dict"]
+    elif "model_state_dict" in checkpoint:
+        state_dict = checkpoint["model_state_dict"]
+    else:
+        state_dict = checkpoint  # assume raw
+
+    model.load_state_dict(state_dict)
+    model.eval()
+    return model
+
+def predict_flux(generator, target_enrichment, tolerance=2.5, num_samples=10000):
+    generator.to(device)
+    with torch.no_grad():
+        noise = sample_noise(num_samples, 2).to(device)
+        outputs = generator(noise).cpu().numpy()
+        enrichments = outputs[:, 0]
+        fluxes = outputs[:, 1]
+
+        print(f"Generated enrichment range: {enrichments.min():.2f} to {enrichments.max():.2f}")
+        
+        mask = (enrichments >= target_enrichment - tolerance) & (enrichments <= target_enrichment + tolerance)
+        matched_fluxes = fluxes[mask]
+        
+        if len(matched_fluxes) > 0:
+            return float(np.mean(matched_fluxes))
+        else:
+            return 0.0

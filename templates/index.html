@@ -1,251 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>FluxGAN: Neutronics Surrogate Tool</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FluxGAN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Roboto+Mono:wght@700&family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --light-bg: #f1f3f5;
-      --light-card: white;
-      --light-text: #000;
-      --light-accent: #0077b6;
-      --light-box: #e7f5ff;
-
-      --dark-bg: #0d1b2a;
-      --dark-card: #1b263b;
-      --dark-text: #e0e1dd;
-      --dark-accent: #00b4d8;
-      --dark-box: #1a2b3d;
-    }
-
-    body[data-theme="light"] {
-      background-color: var(--light-bg);
-      color: var(--light-text);
-    }
-
-    body[data-theme="dark"] {
-      background-color: var(--dark-bg);
-      color: var(--dark-text);
-    }
-
-    body {
+    html, body {
       margin: 0;
-      font-family: "Segoe UI", sans-serif;
-      padding: 40px 20px;
-      display: flex;
-      justify-content: center;
-      transition: background 0.3s, color 0.3s;
-    }
-
-    .card {
-      border-radius: 12px;
-      padding: 30px 40px;
-      max-width: 600px;
+      padding: 0;
+      height: 100%;
       width: 100%;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-      position: relative;
-      transition: background 0.3s;
-    }
-
-    body[data-theme="light"] .card {
-      background: var(--light-card);
-    }
-
-    body[data-theme="dark"] .card {
-      background: var(--dark-card);
-    }
-
-    .title-bar {
+      font-family: 'Inter', sans-serif;
+      background-color: #f8fafc;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 30px;
+      justify-content: center;
     }
-
+    .container {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 2rem;
+      background: #ffffff;
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
     h1 {
-      font-size: 24px;
-      margin: 0;
+      font-size: 2rem;
+      text-align: center;
+      margin-bottom: 0.5rem;
     }
-
-    .reactor-toggle {
-      display: flex;
-      gap: 10px;
+    .subtitle {
+      text-align: center;
+      color: #6b7280;
+      margin-bottom: 2rem;
     }
-
-    .reactor-btn {
-      padding: 8px 14px;
-      font-size: 15px;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-      font-weight: bold;
-      transition: 0.3s;
-    }
-
-    .reactor-btn.active {
-      background-color: #00b4d8;
-      color: #000;
-    }
-
-    .reactor-btn.inactive {
-      background-color: transparent;
-      color: inherit;
-      border: 2px solid currentColor;
-    }
-
     label {
       display: block;
-      margin-top: 20px;
-      font-weight: bold;
+      margin-bottom: 0.4rem;
+      font-weight: 600;
     }
-
-    input[type="range"] {
+    select, input[type=range] {
       width: 100%;
-      margin-top: 10px;
+      padding: 0.7rem;
+      margin-bottom: 1.5rem;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      background: #f3f4f6;
+      font-size: 1rem;
     }
-
-    .range-value {
-      font-size: 15px;
-      margin-top: 6px;
-      text-align: right;
+    .enrich-badge {
+      float: right;
+      font-weight: 500;
     }
-
-    button.submit-btn {
+    button {
       width: 100%;
-      margin-top: 25px;
-      padding: 12px;
-      background: #00b4d8;
+      padding: 1rem;
+      background: linear-gradient(to right, #6366f1, #3b82f6);
       border: none;
-      color: #000;
-      border-radius: 6px;
-      font-size: 16px;
+      border-radius: 12px;
+      color: white;
       font-weight: bold;
+      font-size: 1.1rem;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: background 0.3s ease;
     }
-
-    .output-box {
-      margin-top: 25px;
-      padding: 15px;
-      border-left: 5px solid #00b4d8;
-      border-radius: 8px;
-      background: rgba(0, 180, 216, 0.05);
-      font-size: 15px;
+    button:hover {
+      background: linear-gradient(to right, #4f46e5, #2563eb);
     }
-
-    .error {
-      color: red;
-      margin-top: 15px;
-    }
-
-    footer {
-      margin-top: 40px;
+    .output {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: #f6f8fc;
+      border-radius: 14px;
       text-align: center;
-      font-size: 13px;
+      font-size: 1.4rem;
     }
-
-    footer a {
-      color: #00b4d8;
-      text-decoration: none;
-      font-weight: bold;
+    .loading-spinner {
+      border: 3px solid #e5e7eb;
+      border-top: 3px solid #6366f1;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      animation: spin 1s linear infinite;
+      margin: auto;
     }
-
-    footer a:hover {
-      text-decoration: underline;
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .footer {
+      margin-top: 2rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+    @media (max-width: 600px) {
+      .container {
+        padding: 1rem;
+      }
     }
   </style>
 </head>
-<body data-theme="light">
-  <div class="card">
-    <div class="title-bar">
-      <h1>FluxGAN: Neutronics Tool</h1>
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <div class="reactor-toggle">
-          <button class="reactor-btn active" data-reactor="phwr">🇮🇳 PHWR</button>
-          <button class="reactor-btn inactive" data-reactor="lwr">🇺🇸 LWR</button>
-        </div>
-        <button id="themeToggle" title="Toggle Theme" style="font-size: 20px; border: none; background: none; cursor: pointer;">
-          🌙
-        </button>
-      </div>
+<body>
+  <div class="container">
+    <h1>FluxGAN</h1>
+    <div class="subtitle">Multi-Reactor Neutron Flux Prediction</div>
+
+    <label for="reactor">Reactor Type</label>
+    <select id="reactor" aria-label="Select reactor type">
+      <option value="phwr">🇮🇳 PHWR</option>
+      <option value="lwr">🇺🇸 LWR</option>
+      <option value="pwr">🇫🇷 PWR</option>
+      <option value="bwr">🇯🇵 BWR</option>
+      <option value="fbr">🇷🇺 FBR</option>
+      <option value="htgr">🇩🇪 HTGR</option>
+    </select>
+
+    <label for="moderator">Moderator</label>
+    <select id="moderator" aria-label="Moderator type"></select>
+
+    <label for="fuel_type">Fuel Type</label>
+    <select id="fuel_type" aria-label="Fuel type"></select>
+
+    <label for="coolant">Coolant</label>
+    <select id="coolant" aria-label="Coolant type"></select>
+
+    <label for="enrichment">Fuel Enrichment <span class="enrich-badge" id="enrich-value">5.0%</span></label>
+    <input type="range" min="0" max="100" step="0.1" value="5.0" id="enrichment">
+
+    <button type="button" onclick="getFlux()">Predict Neutron Flux</button>
+
+    <div class="output" id="output-card">
+      <div id="flux-output">--</div>
     </div>
 
-    <form id="predictForm">
-      <label for="enrichment">Fuel Enrichment (%)</label>
-      <input type="range" id="enrichment" name="enrichment" min="0" max="90" step="0.1" value="3.5" oninput="updateSlider(this.value)" />
-      <div class="range-value">Selected: <span id="rangeValue">3.5</span>%</div>
-
-      <button type="submit" class="submit-btn">🚀 Predict Neutron Flux</button>
-    </form>
-
-    <div id="output" class="output-box" style="display: none;"></div>
-    <div id="error" class="error"></div>
-
-    <footer>
-      Developed by <a href="https://www.linkedin.com/in/kavyawadhwa" target="_blank">Kavya Wadhwa</a> · FluxGAN &copy; 2025
-    </footer>
+    <div class="footer">
+      Developed by <a href="https://www.linkedin.com/in/kavyawadhwa/" target="_blank" rel="noopener">Kavya Wadhwa</a><br>
+      Made with OpenMC + PyTorch (FluxGAN 2025)
+    </div>
   </div>
 
-  <script>
-    let reactor = "phwr";
+  <script defer>
+    const slider = document.getElementById("enrichment");
+    const enrichVal = document.getElementById("enrich-value");
+    const fluxOutput = document.getElementById("flux-output");
+    const outputCard = document.getElementById("output-card");
 
-    document.querySelectorAll(".reactor-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".reactor-btn").forEach(b => b.classList.remove("active"));
-        document.querySelectorAll(".reactor-btn").forEach(b => b.classList.add("inactive"));
-        btn.classList.remove("inactive");
-        btn.classList.add("active");
-        reactor = btn.getAttribute("data-reactor");
+    const reactorDefaults = {
+      phwr: { moderator: ["Heavy Water"], fuel_type: ["Natural Uranium"], coolant: ["Heavy Water"] },
+      lwr: { moderator: ["Light Water"], fuel_type: ["Enriched Uranium"], coolant: ["Light Water"] },
+      pwr: { moderator: ["Light Water"], fuel_type: ["Enriched Uranium"], coolant: ["Light Water"] },
+      bwr: { moderator: ["Light Water"], fuel_type: ["Enriched Uranium"], coolant: ["Light Water"] },
+      fbr: { moderator: ["None"], fuel_type: ["Mixed Oxide (MOX)"], coolant: ["Liquid Sodium"] },
+      htgr: { moderator: ["Graphite"], fuel_type: ["Enriched Uranium"], coolant: ["Helium"] }
+    };
+
+    function setDropdownOptions(id, options) {
+      const select = document.getElementById(id);
+      select.innerHTML = "";
+      options.forEach(opt => {
+        const option = document.createElement("option");
+        option.value = opt;
+        option.textContent = opt;
+        select.appendChild(option);
       });
-    });
-
-    function updateSlider(value) {
-      document.getElementById("rangeValue").innerText = value;
     }
 
-    document.getElementById("predictForm").addEventListener("submit", function (e) {
-      e.preventDefault();
-      const enrichment = document.getElementById("enrichment").value;
-      const output = document.getElementById("output");
-      const error = document.getElementById("error");
+    function updateReactorDefaults() {
+      const reactor = document.getElementById("reactor").value;
+      const defaults = reactorDefaults[reactor];
+      setDropdownOptions("moderator", defaults.moderator);
+      setDropdownOptions("fuel_type", defaults.fuel_type);
+      setDropdownOptions("coolant", defaults.coolant);
+    }
 
-      fetch("/predict", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `enrichment=${encodeURIComponent(enrichment)}&reactor=${reactor}`
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.error) {
-            output.style.display = "none";
-            error.innerText = data.error;
-          } else {
-            output.innerHTML = `
-              <strong>Reactor:</strong> ${data.reactor}<br>
-              <strong>Enrichment:</strong> ${data.enrichment}%<br>
-              <strong>Predicted Flux:</strong> ${data.flux} n/cm²/s
-            `;
-            output.style.display = "block";
-            error.innerText = "";
-          }
-        })
-        .catch(() => {
-          output.style.display = "none";
-          error.innerText = "Server error or invalid response.";
+    document.getElementById("reactor").addEventListener("change", updateReactorDefaults);
+    window.addEventListener("DOMContentLoaded", updateReactorDefaults);
+
+    slider.oninput = () => enrichVal.textContent = slider.value + "%";
+
+    async function getFlux() {
+      const reactor = document.getElementById("reactor").value;
+      const enrichment = parseFloat(slider.value);
+      const moderator = document.getElementById("moderator").value;
+      const fuel_type = document.getElementById("fuel_type").value;
+      const coolant = document.getElementById("coolant").value;
+
+      fluxOutput.innerHTML = '<div class="loading-spinner" aria-label="Loading"></div>';
+
+      try {
+        const response = await fetch("/predict", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ reactor_type: reactor, enrichment: enrichment })
         });
-    });
-
-    // Theme toggle
-    const themeBtn = document.getElementById("themeToggle");
-    const body = document.body;
-
-    themeBtn.addEventListener("click", () => {
-      const currentTheme = body.getAttribute("data-theme");
-      const newTheme = currentTheme === "light" ? "dark" : "light";
-      body.setAttribute("data-theme", newTheme);
-      themeBtn.innerText = newTheme === "dark" ? "☀️" : "🌙";
-    });
+        const data = await response.json();
+        if (data.error) {
+          fluxOutput.innerHTML = `<span style='color:red;'>❌ ${data.error}</span>`;
+        } else {
+          fluxOutput.textContent = `${data.flux.toFixed(4)} n/cm²/s`;
+        }
+      } catch (e) {
+        fluxOutput.innerHTML = `<span style='color:red;'>❌ Network error</span>`;
+      }
+    }
   </script>
 </body>
 </html>
